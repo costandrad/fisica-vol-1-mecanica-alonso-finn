@@ -1,0 +1,43 @@
+---
+title: ""
+author: "Igo da Costa Andrade"
+
+# Metadados
+booktitle: "Física"
+booksubtitle: "um curso universitário. Vol. I - Mecânica"
+bookauthors: "Alonso, M.; Finn, E. J."
+bookaddres: "Rio de Janeiro"
+bookpublisher: "Editora Blucher"
+bookyear: "2011"
+maincolor: "f10025"
+chaptertitle: "Medidas e Unidades"
+chapternumber: "2"
+
+output: 
+  bookdown::pdf_document2:
+    template: template.tex
+knit: >-
+  (function(inputFile, encoding) {
+    rmarkdown::render(
+      input = inputFile,
+      encoding = encoding,
+      output_dir = file.path(dirname(inputFile), "../output"),
+      output_format = "bookdown::pdf_document2"
+    )
+  })
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(reticulate)
+use_python("~/anaconda3/envs/Science/bin/python")
+```
+
+
+\begin{enumerate}
+  \item As massas atômicas, representadas na Tab. A.1, são expressas em \textit{unidades de massa atômica}, abreviadas por u. 1 u é igual a $1,6604 \times 10^{-27}$ kg. Calcule, em quilogramas em em gramas, as massas de (a) um átomo de hidrogênio e (b) um átomo de oxigênio.
+  
+  \iniSol
+  
+  \fimSol
+\end{enumerate}
