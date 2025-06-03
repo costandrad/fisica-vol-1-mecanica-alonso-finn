@@ -30,14 +30,77 @@ knit: >-
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 library(reticulate)
-use_python("~/anaconda3/envs/Science/bin/python")
+use_python("~/anaconda3/envs/science/bin/python")
+
+sci_format <- function(x, digits = 2) {
+  s <- format(x, scientific = TRUE, digits = digits, decimal.mark = ",", big.mark = ".")
+  parts <- strsplit(s, "e")[[1]]
+  
+  expoente <- as.integer(parts[2])
+  
+  if(expoente == 0) {
+    # Retorna sem notação científica quando o expoente é zero
+    return(parts[1])
+  } else {
+    # Retorna com notação científica
+    return(paste0(parts[1], " \\times 10^{", expoente, "}"))
+  }
+}
 ```
+
+```{python geral, include=FALSE}
+u = 1.6604e-27
+```
+
+```{python problema 2.1, include=FALSE}
+Hm_u = 1.00797
+Hm_kg = Hm_u * u
+Om_u = 15.9994
+Om_kg = Om_u * u
+```
+
+```{python problema 2.2, include=FALSE}
+m_h2o = 2*Hm_kg + Om_kg
+N_1g = 1e-3 / m_h2o
+N_18g = 18 * N_1g
+```
+
+
+
 
 
 \begin{enumerate}
   \item As massas atômicas, representadas na Tab. A.1, são expressas em \textit{unidades de massa atômica}, abreviadas por u. 1 u é igual a $1,6604 \times 10^{-27}$ kg. Calcule, em quilogramas em em gramas, as massas de (a) um átomo de hidrogênio e (b) um átomo de oxigênio.
   
   \iniSol
-  
+    \begin{enumerate}[label=(\alph*)]
+      \item Hidrogênio
+      \begin{align*}
+        m_{kg} = \dfrac{1,6604 \times 10^{-27} \; \text{kg}}{1\;\text{u}} \times m_{u} & \Rightarrow m_{kg} = \dfrac{1,6604 \times 10^{-27} \; \text{kg}}{1\;\text{u}} \times 1,00797 \; \text{u}\\
+        & \Rightarrow m_{kg} = `r sci_format(py$Hm_kg, digits=4)` \; \text{kg}
+      \end{align*}
+      \item Oxigênio
+      \begin{align*}
+        m_{kg} = \dfrac{1,6604 \times 10^{-27} \; \text{kg}}{1\;\text{u}} \times m_{u} & \Rightarrow m_{kg} = \dfrac{`r sci_format(py$u, digits=5)`\; \text{kg}}{1\; \text{u}} \times `r format(py$Om_u, decimal.mark=",", big.mark=".")`\; \text{u}\\
+        &\Rightarrow m_{kg} = `r sci_format(py$Om_kg, digits=4)` \; \text{kg}
+      \end{align*}
+    \end{enumerate}
+  \fimSol
+  %%%%
+  \item Quantas moléculas, cada uma composta por um átomo de oxigênio e dois de hidrogênio, existem num grama de água? Quantas existem em 18 gramas? Quantas em um centímetro cúbico?\\
+  \iniSol
+    Conforme problema 2.1, sejam $m_{H} = `r sci_format(py$Hm_kg, digits=4)`$ kg e $m_{O} = `r sci_format(py$Om_kg, digits=4)`$ kg, as massas de um átomo de Hidrogênio (H) e um átomo de Oxigênio (O), respectivamente. Assim, a massa de uma molécula de água, composta por 2 átomos H e um átomo O é:
+    $$
+      m_{H_2O} = 2 \cdot `r sci_format(py$Hm_kg, digits=4)` + `r sci_format(py$Om_kg, digits=4)` = `r sci_format(py$m_h2o, digits=4)` \; \text{kg}
+    $$
+    Portanto, em 1 grama ($10^{-3}$ kg) de água, temos:
+    $$
+    N_{1g} = \dfrac{10^{-3}}{m_{H_2O}} = \dfrac{10^{-3}}{`r sci_format(py$m_h2o, digits=4)`} = `r sci_format(py$N_1g, digits=3)` \; \text{moléculas}
+    $$
+    Em 18 gramas de água, teremos:
+    $$
+    N_{18g} = 18 \; \text{g}  \cdot  \dfrac{N_{1g} \; \text{moléculas}}{1\; \text{grama}}= 18 \cdot `r sci_format(py$N_1g, digits=4)`  = `r sci_format(py$N_18g, digits=3)` \; \text{moléculas} 
+    $$
+    Finalmente, sabendo que a densidade da água é 1 g/cm$^3$, em 1 cm$^3$ haverá $`r sci_format(py$N_1g, digits=3)`$ moléculas de água.
   \fimSol
 \end{enumerate}
