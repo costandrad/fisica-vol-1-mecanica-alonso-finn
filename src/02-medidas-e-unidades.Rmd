@@ -32,15 +32,15 @@ knitr::opts_chunk$set(echo = TRUE)
 library(reticulate)
 use_python("~/anaconda3/envs/science/bin/python")
 
-sci_format <- function(x, digits = 2) {
+sci_fmt <- function(x, digits = 2) {
   s <- format(x, scientific = TRUE, digits = digits, decimal.mark = ",", big.mark = ".")
   parts <- strsplit(s, "e")[[1]]
   
   expoente <- as.integer(parts[2])
   
-  if(expoente == 0) {
+  if(expoente>-3 && expoente<3) {
     # Retorna sem notação científica quando o expoente é zero
-    return(parts[1])
+    return(format(x, decimal.mark=",", big.mark=".", digits=digits))
   } else {
     # Retorna com notação científica
     return(paste0(parts[1], " \\times 10^{", expoente, "}"))
@@ -49,21 +49,47 @@ sci_format <- function(x, digits = 2) {
 ```
 
 ```{python geral, include=FALSE}
-u = 1.6604e-27
+u = 1.6604e-27 # Unidade de massa atômica (u)
+## Massas de átomos em kg
+m_H_u = 1.00797 # Massa do átomo de Hidrogênio em unidades de massa atômica (u)
+m_O_u = 15.9994 # Massa do átomo de Oxigênio em unidades de massa atômica (u)
+m_C_u = 12.0000 # Massa do átomo de Carbono em unidades de massa atômica (u)
+m_N_u = 14.0067 # Massa do átomo de Nitrogênio em unidades de massa atômica (u)
+
+## Densidade relativa de gases
+rho_H2 = 8.988e-5
+rho_O2 = 1.42904e-3
+rho_N2 = 1.25055e-3
 ```
 
-```{python problema 2.1, include=FALSE}
-Hm_u = 1.00797
-Hm_kg = Hm_u * u
-Om_u = 15.9994
-Om_kg = Om_u * u
+```{python problemas, include=FALSE}
+# Problema 2.1
+m_H = m_H_u * u # Massa do átomo de Hidrogênio em kg
+m_O = m_O_u * u # Massa do átomo de Oxigênio em kg
+
+# Problema 2.2
+m_h2o = 2*m_H + m_O # Massa da molécula de água em kg
+N_1g = 1e-3 / m_h2o # Quantidade de moléculas de água em 1 grama
+N_18g = 18 * N_1g # Quantidade de moléculas de água em 18 gramas
+
+# Problema 2.3
+N_C_1kg = 5.0188e25 # Quantidade de átomos do isótopo Carboo 12 em 1 kg
+m_C = 1 / (N_C_1kg * m_C_u) # Massa do átomo de Carbono em kg
+
+# Problema 2.4
+
+## massas das moléculas de H2, O2 e N2
+m_H2 = 2 * m_H_u * u
+m_O2 = 2 * m_O_u * u
+m_N2 = 2 * m_N_u * u
+
+## Número de moléculas por metro cúbico
+N_H2 = rho_H2 / m_H2
+N_O2 = rho_O2 / m_O2
+N_N2 = rho_N2 / m_N2
 ```
 
-```{python problema 2.2, include=FALSE}
-m_h2o = 2*Hm_kg + Om_kg
-N_1g = 1e-3 / m_h2o
-N_18g = 18 * N_1g
-```
+
 
 
 
@@ -77,30 +103,80 @@ N_18g = 18 * N_1g
       \item Hidrogênio
       \begin{align*}
         m_{kg} = \dfrac{1,6604 \times 10^{-27} \; \text{kg}}{1\;\text{u}} \times m_{u} & \Rightarrow m_{kg} = \dfrac{1,6604 \times 10^{-27} \; \text{kg}}{1\;\text{u}} \times 1,00797 \; \text{u}\\
-        & \Rightarrow m_{kg} = `r sci_format(py$Hm_kg, digits=4)` \; \text{kg}
+        & \Rightarrow m_{kg} = `r sci_fmt(py$m_H, digits=4)` \; \text{kg}
       \end{align*}
       \item Oxigênio
       \begin{align*}
-        m_{kg} = \dfrac{1,6604 \times 10^{-27} \; \text{kg}}{1\;\text{u}} \times m_{u} & \Rightarrow m_{kg} = \dfrac{`r sci_format(py$u, digits=5)`\; \text{kg}}{1\; \text{u}} \times `r format(py$Om_u, decimal.mark=",", big.mark=".")`\; \text{u}\\
-        &\Rightarrow m_{kg} = `r sci_format(py$Om_kg, digits=4)` \; \text{kg}
+        m_{kg} = \dfrac{1,6604 \times 10^{-27} \; \text{kg}}{1\;\text{u}} \times m_{u} & \Rightarrow m_{kg} = \dfrac{`r sci_fmt(py$u, digits=5)`\; \text{kg}}{1\; \text{u}} \times `r format(py$m_O_u, decimal.mark=",", big.mark=".")`\; \text{u}\\
+        &\Rightarrow m_{kg} = `r sci_fmt(py$m_O, digits=4)` \; \text{kg}
       \end{align*}
     \end{enumerate}
   \fimSol
   %%%%
   \item Quantas moléculas, cada uma composta por um átomo de oxigênio e dois de hidrogênio, existem num grama de água? Quantas existem em 18 gramas? Quantas em um centímetro cúbico?\\
   \iniSol
-    Conforme problema 2.1, sejam $m_{H} = `r sci_format(py$Hm_kg, digits=4)`$ kg e $m_{O} = `r sci_format(py$Om_kg, digits=4)`$ kg, as massas de um átomo de Hidrogênio (H) e um átomo de Oxigênio (O), respectivamente. Assim, a massa de uma molécula de água, composta por 2 átomos H e um átomo O é:
+    Conforme problema 2.1, sejam $m_{H} = `r sci_fmt(py$m_H, digits=4)`$ kg e $m_{O} = `r sci_fmt(py$m_O, digits=4)`$ kg, as massas de um átomo de Hidrogênio (H) e um átomo de Oxigênio (O), respectivamente. Assim, a massa de uma molécula de água, composta por 2 átomos H e um átomo O é:
     $$
-      m_{H_2O} = 2 \cdot `r sci_format(py$Hm_kg, digits=4)` + `r sci_format(py$Om_kg, digits=4)` = `r sci_format(py$m_h2o, digits=4)` \; \text{kg}
+      m_{H_2O} = 2 \cdot `r sci_fmt(py$m_H, digits=4)` + `r sci_fmt(py$m_O, digits=4)` = `r sci_fmt(py$m_h2o, digits=4)` \; \text{kg}
     $$
     Portanto, em 1 grama ($10^{-3}$ kg) de água, temos:
     $$
-    N_{1g} = \dfrac{10^{-3}}{m_{H_2O}} = \dfrac{10^{-3}}{`r sci_format(py$m_h2o, digits=4)`} = `r sci_format(py$N_1g, digits=3)` \; \text{moléculas}
+    N_{1g} = \dfrac{10^{-3}}{m_{H_2O}} = \dfrac{10^{-3}}{`r sci_fmt(py$m_h2o, digits=4)`} = `r sci_fmt(py$N_1g, digits=3)` \; \text{moléculas}
     $$
     Em 18 gramas de água, teremos:
     $$
-    N_{18g} = 18 \; \text{g}  \cdot  \dfrac{N_{1g} \; \text{moléculas}}{1\; \text{grama}}= 18 \cdot `r sci_format(py$N_1g, digits=4)`  = `r sci_format(py$N_18g, digits=3)` \; \text{moléculas} 
+    N_{18g} = 18 \; \text{g}  \cdot  \dfrac{N_{1g} \; \text{moléculas}}{1\; \text{grama}}= 18 \cdot `r sci_fmt(py$N_1g, digits=4)`  = `r sci_fmt(py$N_18g, digits=3)` \; \text{moléculas} 
     $$
-    Finalmente, sabendo que a densidade da água é 1 g/cm$^3$, em 1 cm$^3$ haverá $`r sci_format(py$N_1g, digits=3)`$ moléculas de água.
+    Finalmente, sabendo que a densidade da água é 1 g/cm$^3$, em 1 cm$^3$ haverá $`r sci_fmt(py$N_1g, digits=3)`$ moléculas de água.
+  \fimSol
+  %%%%
+  \item Na Seç. 2.3 foi mencionado que quilograma poderia ser definido como sendo igual à massa de $`r sci_fmt(py$N_C_1kg, digits=5)`$ átomos so isótopo $^{12}$C, cuja massa é definida como sendo exatamente `r format(py$m_C_u, nsmall=4, decimal.mark=",", big.mark=".")` u. Verifique se essa definição é compatível com o valor de u dado no Prob. 2.1.\\
+  \iniSol
+    \begin{align*}
+      \dfrac{m_{kg}}{m_{u}} = \dfrac{1 \; \text{kg}}{`r sci_fmt(py$N_C_1kg, digits=5)` \; \text{átomos} \times  `r format(py$m_C_u, nsmall=4, decimal.mark=",", big.mark=".")`\;\text{u / átomo}} = `r sci_fmt(py$m_C, digits=5)`\; \text{kg/u}
+    \end{align*}
+  \fimSol
+  %%%%
+  \item Considere as moléculas de hidrogênio, de oxigênio e de nitrogênio, cada uma delas composta por dois átomos idênticos. Calcule o número de moléculas de cada um desses gases, nas condições normais de pressão e temperatura (TPN) existentes em 1 m$^3$. Use os valores das densidades relativas dadas na Tab. 2.2. Faça uma extensão do seu cálculo que seja válida para outros gases. Qual é a conclusão que você pode tirar dos seus resultados?\\
+  \iniSol
+  Sejam $\rho$, a densidade do gás em kg/m$^3$, $m$, a massa de cada molécula, em kg. Então, a quantidade $N$ de moléculas por unidade de volume é tal que: 
+  $$
+  \rho = \dfrac{N \times m }{1} \Rightarrow N = \dfrac{\rho}{m}
+  $$
+  Para cada um dos gases listados, temos:
+  \begin{enumerate}[label=\textbf{(\roman*)}]
+    \item Hidrogênio (H$_2$)
+    Cada molécula de gás tem massa de cada molécula:
+    \begin{align*}
+      m_{H_2 (kg)} = 2 \times m_{H_2 (u)} \times u &= 2 \times `r sci_fmt(py$m_H_u, digits=6)` \; \text{kg/u} \times `r sci_fmt(py$u, digits=5)`\; \text{u} \\
+      &= `r sci_fmt(py$m_H2, digits=5)` \; \text{kg}
+    \end{align*}
+    e densidade igual a $\rho_{H_2} = `r sci_fmt(py$rho_H2, digits=5)`$ kg/m$^3$. Portanto, a quantidade de moléculas em 1 metro cúbico é igual a:
+    $$
+    N_{H_2} = \dfrac{\rho_{H_2}}{m_{H_2}} = \dfrac{`r sci_fmt(py$rho_H2, digits=5)` \; \text{kg/m}^3}{`r sci_fmt(py$m_H2, digits=4)` \; \text{kg/molécula}} = `r sci_fmt(py$N_H2, digits=4)` \; \text{moléculas/m}^3
+    $$
+    %%
+    \item Oxigênio (O$_2$)
+    Cada molécula de gás tem massa de cada molécula:
+    \begin{align*}
+      m_{O_2 (kg)} = 2 \times m_{O_2 (u)} \times u &= 2 \times `r sci_fmt(py$m_O_u, digits=6)` \; \text{kg/u} \times `r sci_fmt(py$u, digits=5)`\; \text{u} \\
+      &= `r sci_fmt(py$m_O2, digits=5)` \; \text{kg}
+    \end{align*}
+    e densidade igual a $\rho_{O_2} = `r sci_fmt(py$rho_O2, digits=5)`$ kg/m$^3$. Portanto, a quantidade de moléculas em 1 metro cúbico é igual a:
+    $$
+    N_{O_2} = \dfrac{\rho_{O_2}}{m_{O_2}} = \dfrac{`r sci_fmt(py$rho_O2, digits=5)` \; \text{kg/m}^3}{`r sci_fmt(py$m_O2, digits=4)` \; \text{kg/molécula}} = `r sci_fmt(py$N_O2, digits=4)` \; \text{moléculas/m}^3
+    $$
+    %%
+    \item Nitrogênio (N$_2$)
+    Cada molécula de gás tem massa de cada molécula:
+    \begin{align*}
+      m_{N_2 (kg)} = 2 \times m_{N_2 (u)} \times u &= 2 \times `r sci_fmt(py$m_N_u, digits=6)` \; \text{kg/u} \times `r sci_fmt(py$u, digits=5)`\; \text{u} \\
+      &= `r sci_fmt(py$m_N2, digits=5)` \; \text{kg}
+    \end{align*}
+    e densidade igual a $\rho_{N_2} = `r sci_fmt(py$rho_N2, digits=5)`$ kg/m$^3$. Portanto, a quantidade de moléculas em 1 metro cúbico é igual a:
+    $$
+    N_{N_2} = \dfrac{\rho_{N_2}}{m_{N_2}} = \dfrac{`r sci_fmt(py$rho_N2, digits=5)` \; \text{kg/m}^3}{`r sci_fmt(py$m_N2, digits=4)` \; \text{kg/molécula}} = `r sci_fmt(py$N_N2, digits=4)` \; \text{moléculas/m}^3
+    $$
+  \end{enumerate}
   \fimSol
 \end{enumerate}
