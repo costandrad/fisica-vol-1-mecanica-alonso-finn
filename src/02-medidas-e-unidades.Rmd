@@ -113,6 +113,35 @@ dh = 0.1 ## cm
 dt = 2 ## h
 v_evap = pi * r**2 * rho_agua * dh/dt
 dNdt_evap = (v_evap * (1/1000) * (1/3600)) / (pi * r**2 * m_h2o)
+
+# Problema 2.9
+## Densidades em gramas por centímetro cúbico
+rho_H2 = 8.988e-5
+rho_H2O = 1.0
+rho_Fe = 7.86
+
+## Massa atômica/molecular
+m_H2 = 2 * m_H_u * u
+m_H2O = (2 * m_H_u + m_O_u) * u
+m_Fe = 55.847 * u
+
+
+## Volume por molécula
+vol_H2 = m_H2 / (1000*rho_H2)
+vol_H2O = m_H2O / (1000*rho_H2O)
+vol_Fe =  m_Fe / (1000*rho_Fe)
+
+## Modelo Cúbico
+### Distância média 
+l_H2 = vol_H2**(1/3)
+l_H2O = vol_H2O**(1/3)
+l_Fe = vol_Fe**(1/3)
+
+## Modelo Esférico
+### Distância média 
+D_H2 = ((6/pi) * vol_H2)**(1/3)
+D_H2O = ((6/pi) * vol_H2O)**(1/3)
+D_Fe = ((6/pi) * vol_Fe)**(1/3)
 ```
 
 
@@ -289,5 +318,63 @@ dNdt_evap = (v_evap * (1/1000) * (1/3600)) / (pi * r**2 * m_h2o)
     \dfrac{\Delta N}{S \Delta t} &= \dfrac{v}{\pi r^2 \cdot m_{H_2O}} = \dfrac{\left(`r sci_fmt(py$v_evap, digits=4)`\; \dfrac{\text{g}}{\text{h}}\right) \cdot \left(\dfrac{1\;\text{kg}}{1000\;\text{g}}\right) \cdot \left(\dfrac{1\;\text{h}}{3600\;\text{s}}\right)}{\pi \left(2 \; \text{cm}\right)^2 \cdot \left(`r sci_fmt(py$m_h2o, digits=4)` \; \text{kg/molécula}\right)}\\
     &= `r sci_fmt(py$dNdt_evap, digits=4)` \; \text{moléculas} \cdot  \text{cm}^{-2} \cdot \text{s}^{-1} 
    \end{align*}
+  \fimSol
+  %%%% Fim do Problema 2.7
+  \item Um \textit{mol} de uma substância é definido como sendo uma quantidade dessa substância, expressa em \textit{gramas}, numericamente igual à massa molecular dessa substância em u. (Quando nos referimos a um elemento químico, e não a um composto, usaremos massa atômica em vez de massa molecular.) Verifique que o número de moléculas (ou de átomos) em um mol de \textit{qualquer} substância é sempre o mesmo e é igual a $6,0225 \times 10^{23}$. Este número, chamado \textit{constante de Avogrado}, é uma constante física muito importante.\\
+  \iniSol
+  Seja $1 \; \text{u} = `r sci_fmt(py$u, digits=5)`\;\text{kg} \Rightarrow 1\; \text{u} = `r sci_fmt(1000*py$u, digits=5)`\; \text{g}$. Consideremos uma substância (átomo ou molécula) cuja massa molecular em unidade de massa atômica seja $m = k\; \text{u}$, em que $K$ é uma constante positiva.\\
+  %%
+  Nesse caso, considerando a definição dada, 1 \textit{mol} dessa substância tem massa, em gramas, igual a $M = K\; \text{g}$. A quantidadde de entidades(átomos ou moléculas) dessa substância será $N_{A}$ tal que:
+  \begin{align*}
+    M = m \cdot N_{A} \Rightarrow N_A = \dfrac{M}{m} &= \dfrac{K \; \text{g}}{\left(K\; \text{u/entidade}\right) \cdot \left(\dfrac{`r sci_fmt(1000*py$u, digits=5)`\; \text{g}}{1\; \text{u}}\right)}\\
+    &= \dfrac{1}{`r sci_fmt(1000*py$u, digits=5)`} \; \text{entidades}\\
+    &= `r sci_fmt(1/(1000*py$u), digits=5)` \; \text{entidades (átomos ou moléculas)} 
+  \end{align*}
+  \fimSol
+  %%%% Fim do Problema 2.8
+  \item Usando os dados das Tabs 2.2 e A.1, avalie a separação média entre as moléculas nas condições TPN, no hidrogênio (gás), na água (líquido) e no ferro (sólido).\\
+  \iniSol
+  Consideremos determinada quantidade de substância de densidade $\rho$, ocupando um volume $V$. A massa presente nesse volume é $M = m \cdot N$ em que $m$ é a massa molecular e $N$ é a quantidade de moléculas presentes. Determinemos o volume médio por molécula ($V/N$):
+  \begin{align*}
+    \rho = \dfrac{M}{V} \Rightarrow \rho = \dfrac{m \cdot N}{V} \Rightarrow \dfrac{V}{N} = \dfrac{m}{\rho}
+  \end{align*}
+  \textbf{Modelo Cúbico:} Consideremos que esse volume médio por molécula seja um cubo de lado $l$. Assim, a distância média entre as moléculas será:
+  $$
+    l = \sqrt[3]{\frac{V}{N}} \Rightarrow l = \sqrt[3]{\dfrac{m}{\rho}}
+  $$
+  Aplicando a fórmula acima às substâncias dadas, temos:
+  \begin{itemize}
+    \item[] \textbf{Hidrogênio:}
+    \begin{align*}
+      l = \sqrt[3]{\dfrac{m}{\rho}} = \sqrt[3]{\dfrac{`r sci_fmt(py$m_H2, digits=4)` \; \text{kg}}{`r sci_fmt(1000*py$rho_H2, digits=4)`\; \text{kg/m}^3}} = \sqrt[3]{`r sci_fmt(py$vol_H2, digits=4)` \; \text{m}^3} = `r sci_fmt(py$l_H2, digits=3)` \; \text{m}
+    \end{align*}
+    \item[] \textbf{Água:}
+    \begin{align*}
+      l = \sqrt[3]{\dfrac{m}{\rho}} = \sqrt[3]{\dfrac{`r sci_fmt(py$m_H2O, digits=4)` \; \text{kg}}{`r sci_fmt(1000*py$rho_H2O, digits=4)`\; \text{kg/m}^3}} = \sqrt[3]{`r sci_fmt(py$vol_H2O, digits=4)` \; \text{cm}^3} = `r sci_fmt(py$l_H2O, digits=4)` \; \text{m}
+    \end{align*}
+    \item[] \textbf{Ferro:}
+    \begin{align*}
+      l = \sqrt[3]{\dfrac{m}{\rho}} = \sqrt[3]{\dfrac{`r sci_fmt(py$m_Fe, digits=4)` \; \text{kg}}{`r sci_fmt(1000*py$rho_Fe, digits=4)`\; \text{kg/m}^3}} = \sqrt[3]{`r sci_fmt(py$vol_Fe, digits=4)` \; \text{m}^3} = `r sci_fmt(py$l_Fe, digits=4)` \; \text{m}
+    \end{align*}
+  \end{itemize}
+  \textbf{Modelo esférico:} Consideremos que o volume médio por molécula seja uma esfera de diâmetro $D$. Assim, a distância média entre as moléculas será:
+  $$
+    \dfrac{V}{N} = \dfrac{\pi D^3}{6} \Rightarrow D = \sqrt[3]{\dfrac{6}{\pi} \dfrac{V}{N}} \Rightarrow D = \sqrt[3]{\dfrac{6}{\pi} \dfrac{m}{\rho}} 
+  $$
+  Aplicando a fórmula acima às substâncias dadas, temos:
+  \begin{itemize}
+    \item[] \textbf{Hidrogênio:}
+    \begin{align*}
+      D = \sqrt[3]{\dfrac{6}{\pi}\dfrac{m}{\rho}} = \sqrt[3]{\dfrac{6}{\pi} \cdot \dfrac{`r sci_fmt(py$m_H2, digits=4)` \; \text{kg}}{`r sci_fmt(1000*py$rho_H2, digits=4)`\; \text{kg/m}^3}}  = `r sci_fmt(py$D_H2, digits=3)` \; \text{m}
+    \end{align*}
+    \item[] \textbf{Água:}
+    \begin{align*}
+      D = \sqrt[3]{\dfrac{6}{\pi}\dfrac{m}{\rho}} = \sqrt[3]{\dfrac{6}{\pi} \cdot \dfrac{`r sci_fmt(py$m_H2O, digits=4)` \; \text{kg}}{`r sci_fmt(1000*py$rho_H2O, digits=4)`\; \text{kg/m}^3}} =  `r sci_fmt(py$D_H2O, digits=4)` \; \text{m}
+    \end{align*}
+    \item[] \textbf{Ferro:}
+    \begin{align*}
+      D = \sqrt[3]{\dfrac{6}{\pi}\dfrac{m}{\rho}} = \sqrt[3]{\dfrac{6}{\pi} \cdot \dfrac{`r sci_fmt(py$m_Fe, digits=4)` \; \text{kg}}{`r sci_fmt(1000*py$rho_Fe, digits=4)`\; \text{kg/m}^3}} =  `r sci_fmt(py$D_Fe, digits=4)` \; \text{m}
+    \end{align*}
+  \end{itemize}
   \fimSol
 \end{enumerate}
