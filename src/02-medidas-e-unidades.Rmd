@@ -49,6 +49,9 @@ sci_fmt <- function(x, digits = 2) {
 ```
 
 ```{python geral, include=FALSE}
+import numpy as np
+from math import pi
+
 u = 1.6604e-27 # Unidade de massa atômica (u)
 ## Massas de átomos em kg
 m_H_u = 1.00797 # Massa do átomo de Hidrogênio em unidades de massa atômica (u)
@@ -60,6 +63,9 @@ m_N_u = 14.0067 # Massa do átomo de Nitrogênio em unidades de massa atômica (
 rho_H2 = 8.988e-5
 rho_O2 = 1.42904e-3
 rho_N2 = 1.25055e-3
+
+## Densidade da água em g/cm^3
+rho_agua = 1.0
 ```
 
 ```{python problemas, include=FALSE}
@@ -96,6 +102,17 @@ m_Ar = m_Ar_u * u # Massa molecular do ar em kg
 ## Quantidade de moléculas de ar em 1 cm3
 N_Ar = (0.2 * rho_O2 + 0.8 * rho_N2) / (1000*m_Ar)
 N_O2, N_N2 = 0.2 * N_Ar, 0.8*N_Ar
+
+# Problema 2.6
+rho_space = 1e-21 # Densidade do espaço interestelar em kg/m3
+N_space = rho_space / m_H
+
+# Problema 2.7
+r = 2 ## cm
+dh = 0.1 ## cm
+dt = 2 ## h
+v_evap = pi * r**2 * rho_agua * dh/dt
+dNdt_evap = (v_evap * (1/1000) * (1/3600)) / (pi * r**2 * m_h2o)
 ```
 
 
@@ -235,5 +252,42 @@ N_O2, N_N2 = 0.2 * N_Ar, 0.8*N_Ar
         &N_{N_2} = 0,8 \cdot N_{Ar} = 0,8 \cdot `r sci_fmt(py$N_Ar, digits=4)` = `r sci_fmt(py$N_N2, digits=4)`\; \text{moléculas de nitrogênio}
       \end{align*}
   \end{itemize}
+  \fimSol
+  %%%% Fim do Problema 2.5
+  \item A densidade do gás interestelar na nossa galáxia é avaliada em cerca de $10^{-21}\;\text{kg/m}^{-3}$. Admitindo-se que esse gás é constituído principalmente de hidrogênio, avalie o número de átomos de hidrgênio por $\text{cm}^3$. Compare esse resultado com o correspondente obtido para o ar nas condições TPN (Prob. 2.5).\\
+  \iniSol
+    Em um volume $V$, teremos a massa $M = \rho \cdot V = m_{H} \cdot N$, em que $\rho = 10^{-21} \; \text{kg/m}^3$ é a densidade do gás interestelar, $m_{H} = `r sci_fmt(py$m_H, digits=4)` \; \text{kg/molécula}$ é a massa molecular do átomo de hidrogênio e $N$ é a quantidade de moléculas presentes no volume $V$. Assim,  
+    \begin{align*}
+      M = \rho \cdot V = m_{H} \cdot N &\Rightarrow \dfrac{N}{V} = \dfrac{\rho}{m_{H}} = \dfrac{`r sci_fmt(py$rho_space, digits=4)`\; \text{kg/m}^3}{`r sci_fmt(py$m_H, digits=4)`\; \text{kg/molécula}}\\
+      &\Rightarrow \dfrac{N}{V} = `r sci_fmt(py$N_space, digits=4)` \; \text{moléculas/m}^3 \approx `r sci_fmt(py$N_space * 1e-6, digits=2)` \; \text{moléculas/cm}^3
+    \end{align*}
+  \fimSol
+  %%%% Fim do Problema 2.6
+  \item Um como de 2 cm de raio contém água. Em duas horas, o nível da água baixa 1mm. Avalie, em gramas por hora, a velocidade de evaporação da água. Quantas moléculas de água estão se evaporando por secundo em cada centímetro quadrado da superfície da água? (Sugerimos que o estudante realize esta experiência e obtenha seus próprios dados. Por que você obtém resultados diferentes cada dia?).\\
+  \iniSol
+   Consideremos que em  um intervalo de tempo $\Delta t$, a quantidade de massa de água evaporada seja $\Delta m = \rho_{H_2O} \Delta V$, em que $\rho_{H_2O} = 1 \; \text{g/cm}^3$ é a densidade da água e $\Delta V$ é o volume de água evaporado. Para um copo cilíndrico de raio $r = 2$ cm, se a altura do copo baixa $\Delta h = 1\;\text{mm} = 0,1\; \text{cm}$ em $\Delta t = 2 $ horas, a velocidade $v$ de evaporação será:
+   \begin{align*}
+    v &= \dfrac{\Delta m}{\Delta t} = \dfrac{\rho_{H_2O} \Delta V}{ \Delta t} = \dfrac{\rho_{H_2O} \left(\pi r^2 \Delta h\right)}{\Delta t}\\
+    v &= \pi r^2 \rho_{H_2O}  \dfrac{\Delta h}{\Delta t}\\
+    v &= \pi \cdot \left(2 \; \text{cm}\right)^2 \cdot \left(`r sci_fmt(py$rho_agua, digits=2)` \; \text{g/cm}^3\right) \cdot \dfrac{0,1 \; \text{cm}}{2 \; \text{h}}\\
+    v &= `r sci_fmt(py$v_evap, digits=3)` \; \text{g/h}
+   \end{align*}
+   Sabendo que a massa molecular da água é 
+   
+   \begin{align*}
+    m_{H_2O} = 2 \cdot m_{H} + m_{O} &= 2 \cdot \left( `r sci_fmt(py$m_H, digits=4)` \; \text{kg/molécula}\right) + \left( `r sci_fmt(py$m_O, digits=4)` \; \text{kg/molécula}\right)\\
+    &= `r sci_fmt(py$m_h2o, digits=4)` \; \text{kg/molécula}\\
+    &= `r sci_fmt(1000*py$m_h2o, digits=4)` \; \text{g/molécula}
+   \end{align*}
+   
+   Retornemos à equação básica para a taxa de evaporação $v = \dfrac{\Delta m}{\Delta t}$. Seja $\Delta m = m_{H_2O} \cdot \Delta N$, em que $m_{H_2O} = `r sci_fmt(py$m_h2o, digits=4)`$ kg/molécula (Ver Probl. 2.2) e $\Delta N$ é a quantidade de moléculas que se evaporaram no intervalo de tempo $\Delta t$.   Assim, 
+   \begin{align*}
+    v = \dfrac{\Delta m}{\Delta t} \Rightarrow v = \dfrac{m_{H_2O} \Delta N}{\Delta t} \Rightarrow \dfrac{\Delta N}{\Delta t} = \dfrac{v}{m_{H_2O}}
+   \end{align*}
+   Finalmente, a quantidade de moléculas se evaporando por segundo em cada cemtímetro quadrado da superfície da água é ($S = \pi r^2$)
+   \begin{align*}
+    \dfrac{\Delta N}{S \Delta t} &= \dfrac{v}{\pi r^2 \cdot m_{H_2O}} = \dfrac{\left(`r sci_fmt(py$v_evap, digits=4)`\; \dfrac{\text{g}}{\text{h}}\right) \cdot \left(\dfrac{1\;\text{kg}}{1000\;\text{g}}\right) \cdot \left(\dfrac{1\;\text{h}}{3600\;\text{s}}\right)}{\pi \left(2 \; \text{cm}\right)^2 \cdot \left(`r sci_fmt(py$m_h2o, digits=4)` \; \text{kg/molécula}\right)}\\
+    &= `r sci_fmt(py$dNdt_evap, digits=4)` \; \text{moléculas} \cdot  \text{cm}^{-2} \cdot \text{s}^{-1} 
+   \end{align*}
   \fimSol
 \end{enumerate}
