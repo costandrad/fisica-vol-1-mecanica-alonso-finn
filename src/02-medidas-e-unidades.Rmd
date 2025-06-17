@@ -79,14 +79,23 @@ m_C = 1 / (N_C_1kg * m_C_u) # Massa do átomo de Carbono em kg
 # Problema 2.4
 
 ## massas das moléculas de H2, O2 e N2
-m_H2 = 2 * m_H_u * u
-m_O2 = 2 * m_O_u * u
-m_N2 = 2 * m_N_u * u
+m_H2 = 2 * m_H_u * u # Massa da molécula de gás hidrogênio (kg/molécula)
+m_O2 = 2 * m_O_u * u # Massa da molécula de gás oxigênio (kg/molécula)
+m_N2 = 2 * m_N_u * u # Massa da molécula de gás nitrogênio (kg/molécula)
 
 ## Número de moléculas por metro cúbico
 N_H2 = rho_H2 / m_H2
 N_O2 = rho_O2 / m_O2
 N_N2 = rho_N2 / m_N2
+
+# Problema 2.5
+## Ver dados do Problema 2.4
+m_Ar_u = 0.2 * 2 * m_O_u + 0.8 * 2 * m_N_u # Massa molecular do ar em unidades de massa atômica
+m_Ar = m_Ar_u * u # Massa molecular do ar em kg
+
+## Quantidade de moléculas de ar em 1 cm3
+N_Ar = (0.2 * rho_O2 + 0.8 * rho_N2) / (1000*m_Ar)
+N_O2, N_N2 = 0.2 * N_Ar, 0.8*N_Ar
 ```
 
 
@@ -178,5 +187,53 @@ N_N2 = rho_N2 / m_N2
     N_{N_2} = \dfrac{\rho_{N_2}}{m_{N_2}} = \dfrac{`r sci_fmt(py$rho_N2, digits=5)` \; \text{kg/m}^3}{`r sci_fmt(py$m_N2, digits=4)` \; \text{kg/molécula}} = `r sci_fmt(py$N_N2, digits=4)` \; \text{moléculas/m}^3
     $$
   \end{enumerate}
+  Os resultados acima parecem indicar que, nas condições normais de pressão e temperatura (TPN), a quantidade de moléculas de gás por unidade de volume é uma constante, nesse caso, aproximadamente igual a $2,69 \times 10^{22}$ moléculas por metro cúbico.
+  \fimSol
+  %%%%
+  \item Admitindo-se que o ar é composto por 20\% de oxigênio e 80\% de nitrogênio, e que esses gases formam moléculas diatômicas, calcule a massa molecular ``efetiva'' do ar. Avalie o múmero de moléculas em 1 cm$^3$ de ar nas condições TPN. Quantas moléculas são de oxigênio e quantas são de nitrogênio?\\
+  \iniSol
+  \begin{itemize}
+    \item[] \textbf{Primeira Parte:}
+    Seja $N_{Ar}$ a quantidade de moléculas de ar presentes em um dado volume $V$. Supondo que o ar é composto por 20\% de oxigênio e 80\% de nitrogênio, temos: $$N_{Ar} = N_{O_2} + N_{N_2},$$
+    em que $N_{O_2} = 0,2N_{Ar}$ é a quantidade de moléculas (diatômicas) de Oxigênio e  $N_{N_2} = 0,8N_{Ar}$ é a quantidade de moléculas (diatômicas) de Nitrogênio.
+    %%
+    Por outro lado, a massa total de ar é $$M_{Ar} = N_{O_2} \cdot m_{O_2} + N_{N_2}  \cdot m_{N_2},$$
+    onde $m_{O_2}$ e $m_{N_2}$ são respectivamente as massas moleculares do Oxigênio e do Nitrogênio. 
+    %%
+    Portanto, a massa molecular do ar será:
+    \begin{align*}
+      m_{Ar} &= \dfrac{M_{Ar}}{N_{Ar}} = \dfrac{N_{O_2} \cdot m_{O_2} + N_{N_2}  \cdot m_{N_2}}{N_{Ar}} = \dfrac{N_{O_2}}{N_{Ar}} m_{O_2} + \dfrac{N_{N_2}}{N_{Ar}} m_{N_2}\\
+      m_{Ar} &= 0,2 m_{O_2} + 0,8 m_{N_2}
+    \end{align*}
+    Em unidades de massa atômica (u) e em quilogramas (kg), temos:
+    \begin{align*}
+      m_{Ar} &= 0,2 \cdot (2 \cdot `r sci_fmt(py$m_O_u, digits=6)`) + 0,8 \cdot (2 \cdot `r sci_fmt(py$m_N_u, digits=6)`)) = `r sci_fmt(py$m_Ar_u, digits=4)` \; \text{u/molécula}\\
+      &= (`r sci_fmt(py$m_Ar_u, digits=4)` \; \text{u/molécula}) \cdot (`r sci_fmt(py$u, digits=6)` \; \text{kg/u}) = `r sci_fmt(py$m_Ar, digits=4)` \; \text{kg/molécula}
+    \end{align*}
+    %%
+    \item[] \textbf{Segunda Parte:}
+    Seja $M_{Ar} = M_{O_2} + M_{N_2}$ massa total de ar em um volume $V$ em função das massas de oxigênio ($M_{O_2}$) e nitrogênio ($M_{N_2}$). Dividindose por $V$, e considerendo que 20\% do ar é composto de oxigênio e 80\%, de nitrogênio, temos:
+    \begin{align*}
+      \dfrac{M_{Ar}}{V} = \dfrac{M_{O_2} + M_{N_2}}{V} &\Rightarrow \dfrac{M_{Ar}}{V} = \dfrac{M_{O_2}}{V} + \dfrac{M_{N_2}}{V}\\
+      &\Rightarrow \dfrac{M_{Ar}}{V} = 0,2 \dfrac{M_{O_2}}{0,2V} + 0,8 \dfrac{M_{N_2}}{0,8V}\\
+      &\Rightarrow \dfrac{M_{Ar}}{V} = 0,2 \rho_{O_2} + 0,8 \rho_{N_2}
+    \end{align*}
+    Na última passagem, observamos o fato de que $\dfrac{M_{O_2}}{0,2V}$ é a massa específica do oxigênio $\rho_{O_2}$ e $\dfrac{M_{N_2}}{0,8V}$ é a massa específica do nitrogênio $\rho_{N_2}$.\\
+    %%
+    Lembrando que na primeira parte deste problema determinamos a massa molecular do ar como $m_{Ar} = \dfrac{M_{Ar}}{N_{Ar}} \Rightarrow M_{Ar} = m_{Ar} N_{Ar}$, podemos determinar a quantidade de moléculas de ar por unidade de volume da seguinte forma:
+    \begin{align*}
+      \dfrac{M_{Ar}}{V} = 0,2 \rho_{O_2} + 0,8 \rho_{N_2} &\Rightarrow \dfrac{m_{Ar} N_{Ar}}{V} = 0,2 \rho_{O_2} + 0,8 \rho_{N_2}\\ 
+      &\Rightarrow \dfrac{N_{Ar}}{V} = \dfrac{0,2 \rho_{O_2} + 0,8 \rho_{N_2}}{m_{ar}}\\
+      &\Rightarrow \dfrac{N_{Ar}}{V} = \dfrac{0,2 \cdot \left(`r sci_fmt(py$rho_O2, digits=4)` \; \text{g/cm}^3\right) + 0,8 \cdot \left(`r sci_fmt(py$rho_N2, digits=4)`\; \text{g/cm}^3\right)}{\left(`r sci_fmt(py$m_Ar, digits=4)`\; \text{kg/molécula}\right) \cdot \left(1000 \; \text{g/kg}\right))}\\
+      &\Rightarrow \dfrac{N_{Ar}}{V} = \dfrac{\left(`r sci_fmt(0.2*py$rho_O2, digits=4)` \; \text{g/cm}^3\right) + \left(`r sci_fmt(0.8*py$rho_N2, digits=4)` \; \text{g/cm}^3\right)}{`r sci_fmt(1000*py$m_Ar, digits=4)`\; \text{g/molécula}}\\
+      &\Rightarrow \dfrac{N_{Ar}}{V} = \dfrac{`r sci_fmt(0.2*py$rho_O2 + 0.8*py$rho_N2, digits=4)` \; \text{g/cm}^3}{`r sci_fmt(1000*py$m_Ar, digits=4)`\; \text{kg/molécula}}\\
+      &\Rightarrow \dfrac{N_{Ar}}{V} = `r sci_fmt(py$N_Ar, digits=4)` \; \text{moléculas/cm}^3
+    \end{align*}
+    Do total teremos
+      \begin{align*}
+        &N_{O_2} = 0,2 \cdot N_{Ar} = 0,2 \cdot `r sci_fmt(py$N_Ar, digits=4)` = `r sci_fmt(py$N_O2, digits=4)`\; \text{moléculas de oxigênio; e}\\
+        &N_{N_2} = 0,8 \cdot N_{Ar} = 0,8 \cdot `r sci_fmt(py$N_Ar, digits=4)` = `r sci_fmt(py$N_N2, digits=4)`\; \text{moléculas de nitrogênio}
+      \end{align*}
+  \end{itemize}
   \fimSol
 \end{enumerate}
