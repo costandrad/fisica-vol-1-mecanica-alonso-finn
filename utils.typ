@@ -56,13 +56,55 @@
 // - Usa vírgula como separador decimal
 // - Usa ponto como separador de milhar na parte inteira
 // -------------------------------------------------------------
-#let fmt(x, digits: 1) = [
+#let fmt(x, digits: 1, sci: false) = [
 
+  // ==============================
+  // NOTAÇÃO CIENTÍFICA
+  // ==============================
+  #if sci and x != 0 {
+    let multiplier = calc.pow(10.0, digits)
+    if sci==false {
+      let result = calc.floor(number * multiplier) / multiplier
+      return str(result).replace(".", ",")
+    }
+
+    let expoent = calc.floor(calc.ln(calc.abs(x)) / calc.ln(10))
+
+    let coefficient = x / (calc.pow(10.0, expoent))
+
+    //let rounded-coefficient = calc.round(coefficient * multiplier) / multiplier
+
+    let rounded-coefficient = calc.round(coefficient, digits: digits)
+
+    let coefficient-str = str(rounded-coefficient).replace(".", ",")
+
+    if expoent == 0 {
+      return $#coefficient-str$
+    }
+
+
+    let expoent-str = str(expoent).replace(".", ",")
+
+    if coefficient == 1 {
+      return $10^(#expoent-str)$
+    }
+
+    if coefficient == 10 {
+      expoent-str = str(expoent+1).replace(".", ",")
+      return $10^(#expoent-str)$
+    }
+
+    return $#coefficient-str times 10^(#expoent-str)$
+  }
+
+  // ==============================
+  // FORMATAÇÃO NORMAL
+  // ==============================
   #if digits == 0 {
     return str(calc.round(x))
   }
 
-  // 1) Arredonda o número para a quantidade de casas pedida
+  // 1) Arredonda
   #let x = calc.round(x, digits: digits)
 
   // 2) Converte para string e troca "." por ","
@@ -72,50 +114,39 @@
     str_x += ",0"
   }
 
-  // 3) Separa em parte inteira e decimal
-  //    split(",") retorna array; flatten() garante (a, b)
+  // 3) Parte inteira e decimal
   #let (parte_inteira, parte_decimal) = str_x.split(",").flatten()
 
-
-  // 4) Garante que a parte decimal tenha exatamente 'digits' caracteres,
-  //    completando com zeros à direita.
+  // 4) Completa casas decimais
   #while parte_decimal.len() < digits {
-    parte_decimal = parte_decimal + "0"
+    parte_decimal += "0"
   }
 
-  // 5) Pega o tamanho da parte inteira
+  // 5) Tamanho da parte inteira
   #let n = parte_inteira.len()
 
-  // 6) Calcula quantos blocos de três haverá (m)
-  //    e quantos dígitos sobrão na esquerda (b)
+  // 6) Blocos de milhares
   #let m = calc.floor(n / 3)
   #let b = calc.rem(n, 3)
 
-  // 7) Começa a parte inteira formatada
-  //    Se b = 0 → string vazia; senão → primeiros b dígitos
+  // 7) Parte inicial
   #let str_parte_inteira = parte_inteira.slice(0, b)
 
-  // 8) Adiciona os grupos de 3 dígitos
+  // 8) Grupos de 3
   #for i in range(m) {
-
-    // Caso especial: se não houver bloco inicial (b = 0)
-    // e este for o primeiro bloco, não coloca ponto antes.
     if b == 0 and i == 0 {
       str_parte_inteira += parte_inteira.slice(
         b + 3*i,
         b + 3*(i + 1)
       )
-    }
-
-    // Caso normal: adiciona "." + grupo de 3 dígitos
-    else {
+    } else {
       str_parte_inteira += "." + parte_inteira.slice(
-          b + 3*i,
-          b + 3*(i + 1)
-        )
+        b + 3*i,
+        b + 3*(i + 1)
+      )
     }
   }
 
-  // 9) Retorna parte inteira com pontos + vírgula + parte decimal
+  // 9) Retorno final
   #return str_parte_inteira + "," + parte_decimal
 ]

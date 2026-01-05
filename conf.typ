@@ -3,8 +3,8 @@
 #import "@preview/cetz-plot:0.1.3"
 #import "@preview/lilaq:0.5.0" as lq
 
-#let primary-color = rgb("#c91437")
-#let secondary-color = rgb("#808387")
+#let primary-color = rgb("#e90017")
+#let secondary-color = rgb("#da998b")
 
 
 #let darkred = rgb("#b00008")
@@ -32,6 +32,8 @@
     year: 2013,
     press: "Bookman",
     address: "Porto Alegre",
+    volume: none,
+    complement: none,
     authors: (
       (
         name: "",
@@ -53,14 +55,14 @@
 ) = {
 
   let book_authors = book.authors.flatten().map(a => a.short-name).join("; ")
-  let book_subtitle = if book.subtitle != none {". : #book.subtitle"} else {""}
+  let book_subtitle = if book.subtitle != none {[: #book.subtitle]} else {""}
 
   let references = text(weight: "light")[#upper(book_authors) #text(weight: "bold")[#book.title]#book_subtitle. #book.address: #book.press, #book.year.]
 
 
   set page(
     paper: "a4",
-    margin: (top: 3cm, bottom: 2cm, left: 2cm, right: 2cm),
+    margin: (top: 3cm, bottom: 2cm, left: 1.5cm, right: 1.5cm),
     header: context {
       if here().page() == 1 {
         []
@@ -68,7 +70,7 @@
         [
           #set text(size: 10pt)
           #rect(width: 100%, stroke: (bottom: 0.6pt))[
-            #text(weight: "bold")[#book.title (#book_authors)]
+            #text(weight: "bold")[#book.title. Vol 1 - Mecânica (#book_authors)]
             #h(1fr) #counter(page).display()
           ]
         ]
