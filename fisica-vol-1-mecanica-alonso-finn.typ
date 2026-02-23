@@ -873,9 +873,9 @@
 
   $
     cases(
-      sin theta approx tan theta\
-      sin theta approx theta\
-      tan theta approx theta
+      sin theta &approx tan theta,
+      sin theta &approx theta,
+      tan theta &approx theta
     )
   $
   ])
