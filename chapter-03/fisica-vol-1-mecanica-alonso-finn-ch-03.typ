@@ -141,3 +141,94 @@
 
       ))
   ])
+
+
++ Calcule o ângulo entre dois vetores, de módulos iguais a 10 e 15 unidades de comprimento, nos casos em que a soma desses vetores é (a) 20 unidades de comprimento e (b) 12 unidades de comprimento. Desenhe uma figura apropriada.
+
+  #solution([
+    #let a = 10
+    #let b = 15
+
+    Sejam $bold(A)$, $bold(B)$ os vetores considerados e $bold(S) = bold(A) + bold(B)$ o veor resultante.  Apliquemos a lei dos cossenos:
+    $
+        bold(S) = bold(A) + bold(B) => S^2 = A^2 + B^2 + 2 A B cos theta
+    $
+    em que $theta$ é o ângulo entre $bold(A)$ e $bold(B)$. Isolando $theta$, temos:
+
+
+    $
+      theta = arccos[(S^2 - (A^2 + B^2))/(2 A B)]
+    $
+
+    #let sa = 20
+    
+    #let numa = sa*sa - (a*a + b*b)
+    #let dena = 2 * a * b
+    #let tha = calc.acos(numa/dena)
+
+
+    Para $A = #a$, $B = #b$ e $S = #sa$,
+    $
+      theta = arccos[(S^2 - (A^2 + B^2))/(2 A B)] = arccos[(#sa ^2 - (#a ^2 + #b ^2))/(2 dot #a dot #b)] = arccos(#numa / #dena) approx #fmt(tha.deg())°
+    $
+
+    #align(center)[
+      #cetz.canvas({
+        import cetz.draw: *
+
+        scale(0.25)
+        rotate(15deg)
+
+        arc((3, 0), radius: 3, start: 0deg, delta: tha, mode: "PIE", fill: color.mix(gray, white), stroke: none)
+        content((3 * calc.cos(tha/2), 3 * calc.sin(tha/2)), [$theta$], anchor: "west", padding: 0.2)
+
+        line((0, 0), (a, 0), mark: (end: "stealth", fill: black), name: "vec-a")
+        content("vec-a.end", [$bold(A)$], anchor: "west", padding: 0.1)
+
+        line((0, 0), (b * calc.cos(tha), b * calc.sin(tha)), mark: (end: "stealth", fill: black), name: "vec-b")
+        content("vec-b.end", [$bold(B)$], anchor: "east", padding: 0.2)
+
+        line((0, 0), (a + b * calc.cos(tha), b * calc.sin(tha)), mark: (end: "stealth", fill: black), name: "vec-b")
+        content("vec-b.end", [$bold(S)$], anchor: "west", padding: 0.2)
+
+        line((a, 0), (a + b * calc.cos(tha), b * calc.sin(tha)), (b * calc.cos(tha), b * calc.sin(tha)), stroke: (dash: "dashed", paint: gray))
+      })
+    ]
+
+
+    #let sb = 12
+    
+    #let numb = sb*sb - (a*a + b*b)
+    #let denb = 2 * a * b
+    #let thb = calc.acos(numb/denb)
+
+
+    Para $A = #a$, $B = #b$ e $S = #sb$,
+    $
+      theta = arccos[(S^2 - (A^2 + B^2))/(2 A B)] = arccos[(#sb ^2 - (#a ^2 + #b ^2))/(2 dot #a dot #b)] = arccos(#numb / #denb) approx #fmt(thb.deg())°
+    $
+
+
+    #align(center)[
+      #cetz.canvas({
+        import cetz.draw: *
+
+        scale(0.25)
+        rotate(-15deg)
+
+        arc((3, 0), radius: 3, start: 0deg, delta: thb, mode: "PIE", fill: color.mix(gray, white), stroke: none)
+        content((3 * calc.cos(thb/2), 3 * calc.sin(thb/2)), [$theta$], anchor: "west", padding: 0.2)
+
+        line((0, 0), (a, 0), mark: (end: "stealth", fill: black), name: "vec-a")
+        content("vec-a.end", [$bold(A)$], anchor: "west", padding: 0.1)
+
+        line((0, 0), (b * calc.cos(thb), b * calc.sin(thb)), mark: (end: "stealth", fill: black), name: "vec-b")
+        content("vec-b.end", [$bold(B)$], anchor: "east", padding: 0.2)
+
+        line((0, 0), (a + b * calc.cos(thb), b * calc.sin(thb)), mark: (end: "stealth", fill: black), name: "vec-b")
+        content("vec-b.end", [$bold(S)$], anchor: "west", padding: 0.2)
+
+        line((a, 0), (a + b * calc.cos(thb), b * calc.sin(thb)), (b * calc.cos(thb), b * calc.sin(thb)), stroke: (dash: "dashed", paint: gray))
+      })
+    ]
+  ])
